@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsInt, IsNotEmpty, IsEmail, IsOptional, IsString } from 'class-validator';
-import { UserDto } from 'src/modules/users/dto/user.dto';
+import { UserDto } from 'src/users/dto/user.dto';
 
 export class TransactionDto {
   @IsInt()
