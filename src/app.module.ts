@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -19,6 +20,7 @@ import { PrismaService } from './prisma.service';
     PassportModule,
     ConfigModule,
     SwaggerModule,
+    EventEmitterModule.forRoot()
   ],
   exports: [PrismaService],
   controllers: [AppController],

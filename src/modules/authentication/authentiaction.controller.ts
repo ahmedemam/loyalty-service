@@ -15,7 +15,7 @@ export class AuthenticationController {
 
   @Post('login')
   public async login(@Req() req: Request, @Body() loginUser: LoginUserDto, @Res({ passthrough: true }) response: Response): Promise<{ accessToken: string }> {
-    return await this.authenticationService.login(loginUser);
+    return this.authenticationService.login(loginUser);
   }
 
   @Post('register')

@@ -18,6 +18,6 @@ export class UserController {
   @Get(':id')
   @ApiCreatedResponse({ type: UserDto })
   public async getUserInfoById(@Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number): Promise<UserDto> {
-    return await this.userService.getUserInfo(id);
+    return this.userService.getUserInfo(id);
   }
 }

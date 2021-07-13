@@ -10,19 +10,22 @@ import { OAuthUserDto } from '../authentication/dto/oauth.user.dto';
 import { CreateOrUpdateTransactionDto } from './dto/create-update-transaction.dto';
 import { TransactionDto } from './dto/transaction.dto';
 import { TransactionService } from './transaction.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @ApiTags('Transactions APIs')
 @Controller('transaction')
 export class TransactionController {
-  constructor(private readonly transactionService: TransactionService) {}
+  constructor(private readonly transactionService: TransactionService, private eventEmitter: EventEmitter2) {}
 
   @UseGuards(AuthGuard('jwt'))
   @ApiBody({ type: CreateOrUpdateTransactionDto })
   @Post('')
   @ApiCreatedResponse({ type: TransactionDto })
-  public async createTransaction(@Req() request: Request, @Body() createdTransaction: CreateOrUpdateTransactionDto): Promise<TransactionDto | Transaction> {
+  public async createTransaction(@Req() request: Request, @Body() createdTransactionPayload: CreateOrUpdateTransactionDto): Promise<TransactionDto | Transaction> {
     const oauthUser = request.user as OAuthUserDto;
-    return await this.transactionService.createNewTransaction(createdTransaction, oauthUser);
+    const createTransaction = this.transactionService.createNewTransaction(createdTransactionPayload, oauthUser);
+    this.eventEmitter.emit('transaction.created', createTransaction);
+    return createTransaction;
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -33,9 +36,11 @@ export class TransactionController {
     @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
     updatedTransactionId: number,
     @Req() request: Request,
-    @Body() updatedTransaction: CreateOrUpdateTransactionDto,
+    @Body() updatedTransactionPayload: CreateOrUpdateTransactionDto,
   ): Promise<TransactionDto> {
     const oauthUser = request.user as OAuthUserDto;
-    return await this.transactionService.updatedTransaction(updatedTransactionId, updatedTransaction, oauthUser);
+    const updatedTransaction = this.transactionService.updatedTransaction(updatedTransactionId, updatedTransactionPayload, oauthUser);
+    this.eventEmitter.emit('transaction.updated', updatedTransaction);
+    return updatedTransaction;
   }
 }
